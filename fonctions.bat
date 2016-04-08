@@ -8,6 +8,7 @@ GOTO :Eof
 :: 08/04/2016       GD      création
 :: 08/04/2016       GD      init sur GitHub
 :: 08/04/2016       GD      Appel par %FicFonctions% pour avoir le batch des fonctions dans un autre dossier
+:: 08/04/2016       GD      Ajout du _ à la fin du nom de la fonction pour identifier une fonction
 :: ================================================================================================
 
 :: la variable %FicFonctions% doit etre initialisée dans le batch d'origine
@@ -16,7 +17,7 @@ GOTO :Eof
 
 
 
-:: ===== :Entete ==============================================================
+:: ===== :Entete_ =============================================================
 :: affiche un entete avec les ***, titre et version
 ::
 :: parametres
@@ -26,9 +27,9 @@ GOTO :Eof
 ::      aucun
 ::
 :: exemple d'appel :
-::      CALL fonctions :Entete
+::      CALL %FicFonctions% :Entete_
 :: ============================================================================
-:Entete
+:Entete_
 SET LigneBarre=%LigneBarre:"=%
 ECHO %LigneBarre%
 ECHO %LigneTitre%
@@ -39,7 +40,7 @@ goto :Eof
 
 
 
-:: ===== :CheckError ==========================================================
+:: ===== :CheckError_ =========================================================
 :: affiche la fenetre en vert si %2 est = 0 sinon affiche en rouge
 ::
 :: parametres
@@ -49,9 +50,9 @@ goto :Eof
 ::      aucun
 ::
 :: exemple d'appel :
-::      CALL fonctions :CheckError %NbError%
+::      CALL %FicFonctions% :CheckError_ %NbError%
 :: ============================================================================
-:CheckError
+:CheckError_
 ECHO Nb erreur : %2
 IF %2 GTR 0 (
     color C0
@@ -62,7 +63,7 @@ GOTO :Eof
 
 
 
-:: == :CopyFic ================================================================
+:: == :CopyFic_ ===============================================================
 :: copy un fichier d'un dossier vers un autre
 ::
 :: parametres
@@ -75,9 +76,9 @@ GOTO :Eof
 ::      %NbError% : incrementé par la fonction
 ::
 :: exemple d'appel :
-::      CALL fonctions :CopyFic "%DirOrigine%" "%DirDestination%" "%FicOrigine%" "%FicDestination%"
+::      CALL %FicFonctions% :CopyFic_ "%DirOrigine%" "%DirDestination%" "%FicOrigine%" "%FicDestination%"
 :: ============================================================================
-:CopyFic
+:CopyFic_
 SET DirFrom=%2
 SET DirTo=%3
 SET FicFrom=%4
@@ -100,7 +101,7 @@ GOTO :Eof
 
 
 
-:: ===== :NbChar ==============================================================
+:: ===== :NbChar_ =============================================================
 :: retourne la longueur d'une chaine
 ::
 :: parametres
@@ -110,9 +111,9 @@ GOTO :Eof
 ::      %longueur% : longueur de la chaine
 ::
 :: exemple d'appel :
-::      CALL fonctions :NbChar %Chaine%
+::      CALL %FicFonctions% :NbChar_ %Chaine%
 :: ============================================================================
-:NbChar
+:NbChar_
 SET Char=%~2
 :NbChar_Boucle
 IF "%Char%"=="" GOTO :Eof
@@ -123,7 +124,7 @@ GOTO :Eof
 
 
 
-:: ===== :CompleteChar ========================================================
+:: ===== :CompleteChar_ =======================================================
 :: complete une ligne avec des espaces à gauche et à droite selon une chaine de reference
 :: centre le texte
 ::
@@ -135,24 +136,24 @@ GOTO :Eof
 ::      %Char% : la ligne %3 modifiée et centré
 ::
 :: exemple d'appel :
-::      CALL fonctions :CompleteChar "**********" "Titre"
+::      CALL %FicFonctions% :CompleteChar_ "**********" "Titre"
 :: ============================================================================
-:CompleteChar
+:CompleteChar_
 REM taille ligne de ref
 SET LigneRef=%2
 SET longueur=0
-CALL %FicFonctions% :NbChar %LigneRef%
+CALL %FicFonctions% :NbChar_ %LigneRef%
 SET NbCharLigneRef=%longueur%
 
 REM :: taille ligne a complete
 SET LigneModif=%3
 SET longueur=0
-CALL %FicFonctions% :NbChar %LigneModif%
+CALL %FicFonctions% :NbChar_ %LigneModif%
 SET NbCharLigneAModif=%longueur%
 
 REM :: preparation de la ligne (-4 pour prendre en compte les * de debut et fin)
 SET /a longueur=%NbCharLigneRef%-%NbCharLigneAModif%-4
-CALL %FicFonctions% :Division %longueur% 2
+CALL %FicFonctions% :Division_ %longueur% 2
 SET /a longeurbefore=%quotient%
 SET /a longeurafter=%quotient%+%reste%
 FOR /l %%X IN (0, 1, %longeurbefore%) DO (
@@ -166,7 +167,7 @@ GOTO :Eof
 
 
 
-:: ===== :Division ============================================================
+:: ===== :Division_ ===========================================================
 :: Resultat d'une division avec quotien et reste
 ::
 :: parametres
@@ -178,9 +179,9 @@ GOTO :Eof
 ::      %reste% : reste de la division
 ::
 :: exemple d'appel :
-::      CALL fonctions :Division 10 2
+::      CALL %FicFonctions% :Division_ 10 2
 :: ============================================================================
-:Division
+:Division_
 SET dividende=%2
 SET diviseur=%3
 SET /a quotient=%dividende%/%diviseur%
@@ -189,7 +190,28 @@ GOTO :Eof
 
 
 
-:: ===== :NomDeLaFonction ============================================================
+:: ===== :Date_ ===============================================================
+:: retourne une date sous les formats JJMMAAAA et AAAAMMJJ
+::
+:: parametres
+::      %2 : Date au format jj/mm/aaaa
+::
+:: valeur de retour
+::      %DateFR% : date au format JJMMAAAA
+::      %DateUS% : date au format AAAAMMJJ
+::
+:: exemple d'appel :
+::      CALL %FicFonctions% :Date_ %DATE%
+:: ============================================================================
+:Date_
+SET DateModif=%2
+SET dateFR=%DateModif:~0,2%%DateModif:~3,2%%DateModif:~6,4%
+SET dateUS=%DateModif:~6,4%%DateModif:~3,2%%DateModif:~0,2%
+GOTO :Eof
+
+
+
+:: ===== :NomDeLaFonction_ ====================================================
 :: description
 ::
 :: parametres
@@ -199,7 +221,7 @@ GOTO :Eof
 ::      aucun
 ::
 :: exemple d'appel :
-::      CALL fonctions :NomDeLaFonction
+::      CALL %FicFonctions% :NomDeLaFonction_
 :: ============================================================================
-:NomDeLaFonction
+:NomDeLaFonction_
 GOTO :Eof
