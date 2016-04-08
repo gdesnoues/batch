@@ -7,7 +7,12 @@ GOTO :Eof
 :: DATE             USER    DESCRIPTION
 :: 08/04/2016       GD      création
 :: 08/04/2016       GD      init sur GitHub
+:: 08/04/2016       GD      Appel par %FicFonctions% pour avoir le batch des fonctions dans un autre dossier
 :: ================================================================================================
+
+:: la variable %FicFonctions% doit etre initialisée dans le batch d'origine
+:: avant tout appel de la fonction CALL %FicFonctions% :NomDeLaFonction
+:: SET FicFonctions=C:\votredossier\fonctions.bat
 
 
 
@@ -136,18 +141,18 @@ GOTO :Eof
 REM taille ligne de ref
 SET LigneRef=%2
 SET longueur=0
-CALL fonctions :NbChar %LigneRef%
+CALL %FicFonctions% :NbChar %LigneRef%
 SET NbCharLigneRef=%longueur%
 
 REM :: taille ligne a complete
 SET LigneModif=%3
 SET longueur=0
-CALL fonctions :NbChar %LigneModif%
+CALL %FicFonctions% :NbChar %LigneModif%
 SET NbCharLigneAModif=%longueur%
 
 REM :: preparation de la ligne (-4 pour prendre en compte les * de debut et fin)
 SET /a longueur=%NbCharLigneRef%-%NbCharLigneAModif%-4
-CALL fonctions :Division %longueur% 2
+CALL %FicFonctions% :Division %longueur% 2
 SET /a longeurbefore=%quotient%
 SET /a longeurafter=%quotient%+%reste%
 FOR /l %%X IN (0, 1, %longeurbefore%) DO (
